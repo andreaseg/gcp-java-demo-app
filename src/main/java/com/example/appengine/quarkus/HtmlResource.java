@@ -6,16 +6,14 @@ import org.eclipse.microprofile.openapi.annotations.OpenAPIDefinition;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.info.Info;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.UriInfo;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -27,11 +25,12 @@ public class HtmlResource {
 
     static final String TEMPLATE = readResource("/template.html");
 
-    @POST
+    @GET
     @Produces(MediaType.TEXT_HTML)
-    @Consumes(MediaType.APPLICATION_JSON)
     @Operation(hidden = true)
-    public String createWebPage(Map<String, Object> request)  {
+    public String createWebPage(@Context UriInfo uriInfo)  {
+
+        var request = uriInfo.getPathParameters();
 
         var jinjava = new Jinjava();
         var renderResult = jinjava.renderForResult(TEMPLATE, request);
