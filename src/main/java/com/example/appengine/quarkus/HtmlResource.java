@@ -31,12 +31,10 @@ public class HtmlResource {
     @Produces(MediaType.TEXT_HTML)
     @Consumes(MediaType.APPLICATION_JSON)
     @Operation(hidden = true)
-    public String createWebPage(Request request)  {
-        var title = Objects.requireNonNull(request.getTitle());
-        var body = Objects.requireNonNull(request.getBody());
+    public String createWebPage(Map<String, Object> request)  {
 
         var jinjava = new Jinjava();
-        var renderResult = jinjava.renderForResult(TEMPLATE, Map.of("title", title, "body", body));
+        var renderResult = jinjava.renderForResult(TEMPLATE, request);
 
         if (renderResult.hasErrors()) {
             throw new IllegalStateException(
