@@ -26,16 +26,18 @@ public class HtmlResource {
 
     static final String TEMPLATE = readResource("/template.html");
 
-    private static final Logger LOG = Logger.getLogger(HtmlResource.class);
 
     @GET
     @Produces(MediaType.TEXT_HTML)
-    @Operation(hidden = true)
     public String createWebPage(@Context UriInfo uriInfo)  {
 
         var request = uriInfo.getPathParameters();
 
-        request.forEach((key, value) -> LOG.debug(key + ": " + value));
+        var title = request.getFirst("title");
+        var body = request.getFirst("body");
+
+        Objects.requireNonNull(title);
+        Objects.requireNonNull(body);
 
         var jinjava = new Jinjava();
         var renderResult = jinjava.renderForResult(TEMPLATE, request);
