@@ -16,7 +16,7 @@ class HtmlResourceTest {
 
     @Test
     void checkOutput() {
-        String output = HtmlResource.render(Map.of("title", "<<title>>", "body", "<<body>>"));
+        String output = HtmlResource.render(Map.of("title", "<<title>>", "body", "<<body>>", "wordcount", "3"));
         System.out.println(output);
         assertTrue(output.contains("<<title>>"));
         assertTrue(output.contains("<<body>>"));
