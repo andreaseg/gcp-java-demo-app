@@ -1,5 +1,5 @@
 runtime: java11
-service: backend
+service: default
 
 instance_class: F2
 
