@@ -2,9 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{{ title }}</title>
+    <title>Knowit GCP Demo</title>
 </head>
 <body>
-    {{ body }}
+   {% if title is defined %}
+    <h1>{{ title }}</h1>
+   {% endif %}
+    <p>{{ body }}</p>
+    <p>Wordcount: {{ wordcount }}</p>
 </body>
 </html>

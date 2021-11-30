@@ -36,6 +36,10 @@ public class HtmlResource {
 
         uriInfo.getQueryParameters().forEach((key, value) -> request.put(key, value.get(0)));
 
+        var wordcount = wordCound(request.get("title")) + wordCound(request.get("body"));
+
+        request.put("wordcount", String.valueOf(wordcount));
+
         return render(request);
     }
 
@@ -58,6 +62,10 @@ public class HtmlResource {
         }
 
         return renderResult.getOutput();
+    }
+
+    private static int wordCound(String str) {
+        return str.split("[\\s,.-]").length;
     }
 
     private static String stringifyError(TemplateError error) {
