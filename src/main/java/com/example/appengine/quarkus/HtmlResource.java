@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -35,23 +36,25 @@ public class HtmlResource {
 
         uriInfo.getQueryParameters().forEach((key, value) -> request.put(key, value.get(0)));
 
+        return render(request);
+    }
 
-
+    static String render(Map<String, String> context) {
         var cfg = JinjavaConfig.newBuilder()
                 .withFailOnUnknownTokens(true)
                 .build();
         var jinjava = new Jinjava(cfg);
-        var renderResult = jinjava.renderForResult(TEMPLATE, request);
+        var renderResult = jinjava.renderForResult(TEMPLATE, context);
 
         if (renderResult.hasErrors()) {
             throw new IllegalStateException(
                     "Render errors:" + lineSeparator() +
-                    renderResult.
-                            getErrors().
-                            stream().
-                            map(HtmlResource::stringifyError).
-                            collect(Collectors.joining(lineSeparator())
-            ));
+                            renderResult.
+                                    getErrors().
+                                    stream().
+                                    map(HtmlResource::stringifyError).
+                                    collect(Collectors.joining(lineSeparator())
+                                    ));
         }
 
         return renderResult.getOutput();
@@ -65,7 +68,7 @@ public class HtmlResource {
         try (InputStream inputStream = Objects.requireNonNull(HtmlResource.class.getResourceAsStream(path));
              ByteArrayOutputStream result = new ByteArrayOutputStream()) {
             byte[] buffer = new byte[1024];
-            for (int length; (length = inputStream.read()) != -1; ) {
+            for (int length; (length = inputStream.read(buffer)) != -1; ) {
                 result.write(buffer, 0, length);
             }
             return result.toString(StandardCharsets.UTF_8.name());
