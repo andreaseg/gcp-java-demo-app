@@ -1,11 +1,10 @@
 package com.example.appengine.quarkus;
 
 import com.hubspot.jinjava.Jinjava;
+import com.hubspot.jinjava.JinjavaConfig;
 import com.hubspot.jinjava.interpret.TemplateError;
 import org.eclipse.microprofile.openapi.annotations.OpenAPIDefinition;
-import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.info.Info;
-import org.jboss.logging.Logger;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -15,6 +14,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -31,15 +31,16 @@ public class HtmlResource {
     @Produces(MediaType.TEXT_HTML)
     public String createWebPage(@Context UriInfo uriInfo)  {
 
-        var request = uriInfo.getQueryParameters();
+        var request = new HashMap<String, String>();
 
-        var title = request.getFirst("title");
-        var body = request.getFirst("body");
+        uriInfo.getQueryParameters().forEach((key, value) -> request.put(key, value.get(0)));
 
-        Objects.requireNonNull(title);
-        Objects.requireNonNull(body);
 
-        var jinjava = new Jinjava();
+
+        var cfg = JinjavaConfig.newBuilder()
+                .withFailOnUnknownTokens(true)
+                .build();
+        var jinjava = new Jinjava(cfg);
         var renderResult = jinjava.renderForResult(TEMPLATE, request);
 
         if (renderResult.hasErrors()) {
