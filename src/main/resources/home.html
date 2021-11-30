@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Knowit GCP Demo</title>
+    <script>
+        const submit = event => {
+            event.preventDefault();
+            const title = document.getElementById('title').value;
+            const body = document.getElementById('body').value;
+            window.location.href = `./?title=${title}&body=${body}`;
+        };
+
+        window.onload = () => {
+            document.getElementById('submit').addEventListener("click", submit);
+        };
+    </script>
+</head>
+<body>
+<form>
+    <label for="title">Title</label>
+    <input id="title" style="display:block">
+    <label for="body">Body</label>
+    <textarea id="body" style="display:block"></textarea>
+    <button id="submit">Submit</button>
+</form>
+</body>
+</html>

@@ -3,6 +3,7 @@ package com.example.appengine.quarkus;
 import com.hubspot.jinjava.Jinjava;
 import com.hubspot.jinjava.JinjavaConfig;
 import com.hubspot.jinjava.interpret.TemplateError;
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.microprofile.openapi.annotations.OpenAPIDefinition;
 import org.eclipse.microprofile.openapi.annotations.info.Info;
 
@@ -25,16 +26,26 @@ import static java.lang.System.lineSeparator;
 @Path("/")
 public class HtmlResource {
 
+    static final String HOME = readResource("/home.html");
     static final String TEMPLATE = readResource("/template.html");
 
 
     @GET
     @Produces(MediaType.TEXT_HTML)
-    public String createWebPage(@Context UriInfo uriInfo)  {
+    public String createWebPage(@Context UriInfo uriInfo) {
 
         var request = new HashMap<String, String>();
 
-        uriInfo.getQueryParameters().forEach((key, value) -> request.put(key, value.get(0)));
+        uriInfo.getQueryParameters().forEach((key, values) -> {
+            String value = values.get(0);
+            if (StringUtils.isNotEmpty(value)) {
+                request.put(key, value);
+            }
+        });
+
+        if (request.isEmpty()) {
+            return HOME;
+        }
 
         var wordcount = wordCound(request.get("title")) + wordCound(request.get("body"));
 
