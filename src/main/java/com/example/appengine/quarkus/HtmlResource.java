@@ -31,7 +31,7 @@ public class HtmlResource {
     @Produces(MediaType.TEXT_HTML)
     public String createWebPage(@Context UriInfo uriInfo)  {
 
-        var request = uriInfo.getPathParameters();
+        var request = uriInfo.getQueryParameters();
 
         var title = request.getFirst("title");
         var body = request.getFirst("body");
