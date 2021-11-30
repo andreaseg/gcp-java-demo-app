@@ -5,6 +5,7 @@ import com.hubspot.jinjava.interpret.TemplateError;
 import org.eclipse.microprofile.openapi.annotations.OpenAPIDefinition;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.info.Info;
+import org.jboss.logging.Logger;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -25,12 +26,16 @@ public class HtmlResource {
 
     static final String TEMPLATE = readResource("/template.html");
 
+    private static final Logger LOG = Logger.getLogger(HtmlResource.class);
+
     @GET
     @Produces(MediaType.TEXT_HTML)
     @Operation(hidden = true)
     public String createWebPage(@Context UriInfo uriInfo)  {
 
         var request = uriInfo.getPathParameters();
+
+        request.forEach((key, value) -> LOG.debug(key + ": " + value));
 
         var jinjava = new Jinjava();
         var renderResult = jinjava.renderForResult(TEMPLATE, request);
