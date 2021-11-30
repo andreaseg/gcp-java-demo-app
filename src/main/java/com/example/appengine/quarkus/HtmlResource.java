@@ -10,6 +10,7 @@ import org.eclipse.microprofile.openapi.annotations.info.Info;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -32,26 +33,30 @@ public class HtmlResource {
 
     @GET
     @Produces(MediaType.TEXT_HTML)
-    public String createWebPage(@Context UriInfo uriInfo) {
+    public Response createWebPage(@Context UriInfo uriInfo) {
+        try {
 
-        var request = new HashMap<String, String>();
+            var request = new HashMap<String, String>();
 
-        uriInfo.getQueryParameters().forEach((key, values) -> {
-            String value = values.get(0);
-            if (StringUtils.isNotEmpty(value)) {
-                request.put(key, value);
+            uriInfo.getQueryParameters().forEach((key, values) -> {
+                String value = values.get(0);
+                if (StringUtils.isNotEmpty(value)) {
+                    request.put(key, value);
+                }
+            });
+
+            if (request.isEmpty()) {
+                return Response.ok(HOME).build();
             }
-        });
 
-        if (request.isEmpty()) {
-            return HOME;
+            var wordcount = wordCound(request.get("title")) + wordCound(request.get("body"));
+
+            request.put("wordcount", String.valueOf(wordcount));
+
+            return Response.ok(render(request)).build();
+        } catch (Throwable dontDoThisAtHome) {
+            return Response.serverError().entity("Oh no :(").build();
         }
-
-        var wordcount = wordCound(request.get("title")) + wordCound(request.get("body"));
-
-        request.put("wordcount", String.valueOf(wordcount));
-
-        return render(request);
     }
 
     static String render(Map<String, String> context) {
