@@ -3,6 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <title>Knowit GCP Demo</title>
+    <script>
+        const reset = event => {
+            event.preventDefault();
+            window.location.href = './';
+        };
+
+        window.onload = () => {
+            document.getElementById('reset').addEventListener("click", reset);
+        };
+    </script>
 </head>
 <body>
    {% if title is defined %}
@@ -10,5 +20,6 @@
    {% endif %}
     <p>{{ body }}</p>
     <p>Wordcount: {{ wordcount }}</p>
+    <button id="reset">Reset</button>
 </body>
 </html>
