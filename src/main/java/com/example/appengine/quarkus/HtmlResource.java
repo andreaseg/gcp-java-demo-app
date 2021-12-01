@@ -29,7 +29,7 @@ public class HtmlResource {
 
     static final String HOME = readResource("/home.html");
     static final String TEMPLATE = readResource("/template.html");
-
+    static final String ERROR = readResource("/500.html");
 
     @GET
     @Produces(MediaType.TEXT_HTML)
@@ -55,7 +55,7 @@ public class HtmlResource {
 
             return Response.ok(render(request)).build();
         } catch (Throwable dontDoThisAtHome) {
-            return Response.serverError().entity("Oh no :(").build();
+            return Response.serverError().entity(ERROR).build();
         }
     }
 
